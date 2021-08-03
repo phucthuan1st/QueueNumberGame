@@ -18,9 +18,18 @@
     <ClInclude Include="ConsoleSetting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="QueueGameInit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="library.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConsoleSetting.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="QueueGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
