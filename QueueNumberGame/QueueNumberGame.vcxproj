@@ -147,6 +147,9 @@
     <ClCompile Include="ConsoleSetting.cpp" />
     <ClCompile Include="QueueGame.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Media Include="Resource\Main Menu Bg sound.wav" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

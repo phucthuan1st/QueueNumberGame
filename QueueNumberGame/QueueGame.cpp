@@ -4,6 +4,29 @@ int random(int minN, int maxN) {
 	return minN + rand() % (maxN + 1 - minN);
 }
 
+enum class KEY {UP, DOWN, LEFT, RIGHT, ENTER, ESCAPE, keynone};
+
+KEY key(int _key_)
+{
+	if (_key_ == 224)
+	{
+		char c = _getch();
+		if (c == 72)
+			return KEY::UP;
+		if (c == 80)
+			return KEY::DOWN;
+		if (c == 75)
+			return KEY::LEFT;
+		if (c == 77)
+			return KEY::RIGHT;
+	}
+	else if (_key_ == 13)
+		return KEY::ENTER;
+	else if (_key_ == 27)
+		return KEY::ESCAPE;
+	return KEY::keynone;
+}
+
 void CreateANewQueue(Queue& q) {
 	while (q.size() != 0) {
 		q.pop();
@@ -68,21 +91,42 @@ void DrawMenu(str choice[], int numberOfChoice, int isChoosed, SHORT X, SHORT Y)
 
 void MainMenu(char* name) {
 	clrscr();
+	PlaySound(TEXT("./Resource/Main Menu Bg sound.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
 	bool running = true;
 	SHORT baseX = 7, baseY = 3;
 	str choice[5]{ "Start Game", "High Score", "History", "Setting", "Quit Game" };
 	int numberOfChoice = 5;
+	int isChoosed = 0;
+	DrawBox();
+	DrawName(name, baseX, baseY);
+	DrawMenu(choice, numberOfChoice, isChoosed, baseX + 13, baseY + 8);
+	RenderText((char*)"Now playing: Origin - TheFatRat", baseX - 2, baseY + 26, ColorCode_Yellow);
 	while (running) {
-		int isChoosed = 0;
+		
+		int z = _getch();
+		KEY stt = key(z);
+		if (stt == KEY::UP) {
+			if (isChoosed == 0)
+				isChoosed = numberOfChoice - 1;
+			else isChoosed--;
+		}
+		else if (stt == KEY::DOWN) {
+			if (isChoosed == numberOfChoice - 1) {
+				isChoosed = 0;
+			}
+			else
+				isChoosed++;
+		}
+		else if (stt == KEY::ESCAPE) {
+			exit(0);
+		}
 		DrawBox();
 		DrawName(name, baseX, baseY);
 		DrawMenu(choice, numberOfChoice, isChoosed, baseX + 13, baseY + 8);
-		running = 0;
 	}
 }
 
 int main() {
-	SetConsoleOutputCP(65001);
 	SetWindowSize(MaxWidth, MaxHeight);
 	char* name = new char[30];
 	Login(name);
