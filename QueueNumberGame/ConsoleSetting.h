@@ -1,5 +1,5 @@
 #pragma once
-#include "library.h"
+#include <Windows.h>
 
 void SetWindowSize(SHORT width, SHORT height);
 void SetScreenBufferSize(SHORT width, SHORT height);
@@ -10,3 +10,7 @@ void clrscr();
 int whereX();
 int whereY();
 void TextColor(int color);
+void GotoXY(SHORT x, SHORT y);
+
+
+

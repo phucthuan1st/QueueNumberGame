@@ -1,5 +1,8 @@
 #pragma once
-#include "library.h"
+#include <iostream>
+#include <fstream>
+#include <ctime>
+typedef const char* str;
 
 #define BOUND 52
 

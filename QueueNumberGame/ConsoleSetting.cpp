@@ -1,4 +1,4 @@
-#include "ConsoleSetting.h"
+#include "library.h"
 
 HANDLE hStdinp = GetStdHandle(STD_INPUT_HANDLE);
 HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);

@@ -1,0 +1,2 @@
+E:\Project_C++\QueueNumberGame\QueueNumberGame\Debug\QueueNumberGame.exe
+E:\Project_C++\QueueNumberGame\QueueNumberGame\Debug\QueueNumberGame.pdb

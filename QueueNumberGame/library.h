@@ -1,8 +1,6 @@
 #pragma once
-#include <iostream>
-#include <fstream>
-#include <Windows.h>
-#include <ctime>
+#include "ConsoleSetting.h"
+#include "QueueGameInit.h"
 
 #define ColorCode_Black			0
 #define ColorCode_DarkBlue		1
@@ -21,8 +19,5 @@
 #define ColorCode_Yellow		14
 #define ColorCode_White			15
 
-typedef const char* str;
-
-
-
-
+#define MaxWidth 80
+#define MaxHeight 30
