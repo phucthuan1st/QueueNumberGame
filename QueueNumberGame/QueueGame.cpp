@@ -1,5 +1,15 @@
 #include "library.h"
 
+void FormatConsole() {
+	SetConsoleTitle(TEXT("Queue Number Game"));
+	SetWindowSize(MaxWidth, MaxHeight);
+	SetScreenBufferSize(MaxWidth, MaxHeight);
+	DisableCtrButton(0, 1, 1);
+	DisableSelection();
+	DisableResizeWindow();
+	ShowScrollbar(0);
+}
+
 int random(int minN, int maxN) {
 	return minN + rand() % (maxN + 1 - minN);
 }
@@ -83,18 +93,20 @@ void DrawMenu(str choice[], int numberOfChoice, int isChoosed, SHORT X, SHORT Y)
 	for (SHORT index = 0; index < numberOfChoice; index++) {
 		int x = baseX + (20 - strlen(choice[index])/2);
 		if (index == isChoosed)
-			RenderText((char*)choice[index], x, baseY + index, ColorCode_Green*16 + ColorCode_Black);
+			RenderText((char*)choice[index], x, baseY + index*2, ColorCode_Green*16 + ColorCode_Black);
 		else 
-			RenderText((char*)choice[index], x, baseY + index, ColorCode_Green);
+			RenderText((char*)choice[index], x, baseY + index*2, ColorCode_Green);
 	}
 }
 
 void MainMenu(char* name) {
 	clrscr();
+	FormatConsole();
+	ShowCur(0);
 	PlaySound(TEXT("./Resource/Main Menu Bg sound.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
 	bool running = true;
 	SHORT baseX = 7, baseY = 3;
-	str choice[5]{ "Start Game", "High Score", "History", "Setting", "Quit Game" };
+	str choice[5]{ "  Start Game  ", "  High Score  ", "  History  ", "  Setting  ", "  Quit Game  " };
 	int numberOfChoice = 5;
 	int isChoosed = 0;
 	DrawBox();
@@ -127,7 +139,7 @@ void MainMenu(char* name) {
 }
 
 int main() {
-	SetWindowSize(MaxWidth, MaxHeight);
+	FormatConsole();
 	char* name = new char[30];
 	Login(name);
 	MainMenu(name);

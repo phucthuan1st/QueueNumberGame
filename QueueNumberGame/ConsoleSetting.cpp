@@ -95,3 +95,27 @@ void RenderText(char* text, int x, int y, int color) {
     TextColor(color);
     std::cout << text << std::endl;
 }
+
+void ShowCur(bool CursorVisibility)
+{
+    HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO ConCurInf;
+
+    ConCurInf.dwSize = 10;
+    ConCurInf.bVisible = CursorVisibility;
+
+    SetConsoleCursorInfo(handle, &ConCurInf);
+}
+
+void DisableSelection()
+{
+    HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
+
+    SetConsoleMode(hStdin, ~ENABLE_QUICK_EDIT_MODE);
+}
+
+void ShowScrollbar(BOOL Show)
+{
+    HWND hWnd = GetConsoleWindow();
+    ShowScrollBar(hWnd, SB_BOTH, Show);
+}

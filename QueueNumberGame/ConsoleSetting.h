@@ -11,6 +11,9 @@ int whereX();
 int whereY();
 void TextColor(int color);
 void GotoXY(SHORT x, SHORT y);
+void ShowCur(bool CursorVisibility);
+void DisableSelection();
+void ShowScrollbar(BOOL Show);
 
 
 
