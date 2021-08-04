@@ -1,4 +1,0 @@
-E:\Project_C++\QueueNumberGame\QueueNumberGame\Debug\QueueNumberGame.exe
-E:\Project_C++\QueueNumberGame\QueueNumberGame\Debug\QueueNumberGame.pdb
-E:\Project_C++\QueueNumberGame\Debug\QueueNumberGame.exe
-E:\Project_C++\QueueNumberGame\Debug\QueueNumberGame.pdb

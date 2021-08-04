@@ -1,3 +1,0 @@
-﻿  QueueGame.cpp
-E:\Project_C++\QueueNumberGame\QueueGame.cpp(35,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-  QueueNumberGame.vcxproj -> E:\Project_C++\QueueNumberGame\Debug\QueueNumberGame.exe
