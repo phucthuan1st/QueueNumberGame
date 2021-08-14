@@ -109,3 +109,56 @@ struct Player {
 	char* name;
 	INT64 point;
 };
+
+struct Element {
+	Player player;
+	Element* next;
+
+	Element(Player player) {
+		this->player = player;
+		this->next = NULL;
+	}
+
+};
+
+struct HighScorePlayerList {
+	Element* first_person;
+	Element* last_person;
+
+	void initialize() {
+		first_person = last_person = NULL;
+	}
+
+	bool isEmpty() {
+		if (first_person == NULL)
+			return true;
+		return false;
+	}
+
+	void push(Element* element) {
+		if (isEmpty()) {
+			first_person = last_person = element;
+		}
+		else {
+			if (first_person->player.point <= element->player.point) {
+				element->next = first_person;
+				first_person = element;
+			}
+			else if (last_person->player.point >= element->player.point) {
+				last_person->next = element;
+				last_person = element;
+			}
+			else {
+				for (Element* curElem = first_person; curElem->next != NULL; curElem = curElem->next) {
+					if (curElem->player.point >= element->player.point && curElem->next->player.point <= element->player.point) {
+						Element* front = curElem, * behind = curElem->next;
+						element->next = behind;
+						front->next = element;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+};

@@ -198,7 +198,7 @@ void Game(char* name, INT64 gamemode) {
 				if (winner.point < player[i].point) {
 					winner = player[i];
 				}
-				Sleep(300);
+				Sleep(250);
 				queue.pop();
 			}
 		else
@@ -206,19 +206,75 @@ void Game(char* name, INT64 gamemode) {
 				GotoXY(baseX + 3 + 18 + 8 * j, baseY + 3 + 17 / numberofplayer * i);
 				TextColor(ColorCode_White);
 				std::cout << player[i].point;
-				Sleep(200);
+				Sleep(150);
 			}
 	}
 	RenderText((char*)"The Winner is: ", baseX + 3, baseY + 23, ColorCode_Cyan);
 	GotoXY(baseX + 18, baseY + 23);
 	TextColor(ColorCode_Yellow);
 	std::cout << winner.point << " points - " << winner.name;
+	//save player high score
+	std::fstream fin("./Data/HighScore.dat", std::ios::in);
+	HighScorePlayerList list;
+	list.initialize();
+	for (int i = 0; i < 10; i++) {
+		Player dump;
+		dump.name = new char[30];
+		fin >> dump.point;
+		fin.getline(dump.name, 30);
+		int n = strlen(dump.name);
+		for (int j = 0; j < n; j++) {
+			dump.name[j] = dump.name[j + 1];
+		}
+		dump.name[n] = '\0';
+		Element* ele = new Element(dump);
+		list.push(ele);
+	}
+	Element* me = new Element(player[0]);
+	list.push(me);
+	fin.close();
+	std::fstream fout("./Data/HighScore.dat", std::ios::out);
+	Element* cur = list.first_person;
+	for (int i = 0; i < 10; i++) {
+		fout << cur->player.point << " " << cur->player.name << "\n";
+		cur = cur->next;
+	}
+	fout.close();
 	TextColor(ColorCode_Black);
 	INT64 z = _getch();
 }
 
-void HighScore() {
+void HighScore(char* name) {
+
+	INT64 baseX = 7, baseY = 3;
+	clrscr();
+	DrawBox();
+	DrawName(name, baseX, baseY);
+	RenderText((char*)"HIGH SCORE", baseX + 15, baseY + 2, ColorCode_DarkCyan);
+	std::fstream fin("./Data/HighScore.dat", std::ios::in);
 	
+	for (int i = 0; i < 10; i++) {
+		Player dump;
+		dump.name = new char[30];
+		fin >> dump.point;
+		fin.getline(dump.name, 30);
+		int n = strlen(dump.name);
+		for (int j = 0; j < n; j++) {
+			dump.name[j] = dump.name[j + 1];
+		}
+		dump.name[n] = '\0';
+		GotoXY(baseX + 5, baseY + 4 + i * 2);
+		TextColor(ColorCode_Yellow);
+		std::cout << i + 1;
+		TextColor(ColorCode_Cyan);
+		std::cout << ". " << dump.name;
+		GotoXY(baseX + 35, baseY + 4 + i * 2);
+		TextColor(ColorCode_Red);
+		std::cout << dump.point;
+	}
+
+	fin.close();
+	int z = _getch();
 }
 void History() {
 	
@@ -249,7 +305,7 @@ void MainMenu(char* name) {
 			}
 		}
 		else if (isChoosed == 1)
-			HighScore();
+			HighScore(name);
 		else if (isChoosed == 2)
 			History();
 		else if (isChoosed == 3)

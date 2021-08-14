@@ -142,6 +142,7 @@
     <ClInclude Include="ConsoleSetting.h" />
     <ClInclude Include="library.h" />
     <ClInclude Include="QueueGameInit.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConsoleSetting.cpp" />
@@ -150,6 +151,12 @@
   <ItemGroup>
     <Media Include="Resource\Main Menu Bg sound.wav" />
     <Media Include="Resource\xskt.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="QueueNumberGame.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resource\icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
