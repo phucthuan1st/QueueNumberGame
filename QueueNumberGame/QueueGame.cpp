@@ -170,22 +170,50 @@ void Game(char* name, INT64 gamemode) {
 	clrscr();
 	DrawBox();
 	DrawName(name, baseX, baseY);
+	Player winner;
+	winner.name = new char[30];
+	winner.point = 0;
 	PlaySound(TEXT("./Resource/xskt.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
+	RenderText((char*)"Now playing: Xo So Kien Thiet - DYX Remix                ", baseX - 2, baseY + 26, ColorCode_Yellow);
 	for (int i = 0; i < numberofplayer; i++) {
 		SHORT X = baseX + 3, Y = baseY + 3 + 17 / numberofplayer * i;
 		RenderText(player[i].name, X, Y, ColorCode_Yellow);
-		RenderText((char*)"|", X + 11, Y, ColorCode_Cyan); //18, 26, 34
-		RenderText((char*)"|", X + 22, Y, ColorCode_Cyan);
-		RenderText((char*)"|", X + 30, Y, ColorCode_Cyan);
+		RenderText((char*)" | ", X + 14, Y, ColorCode_Cyan); //18, 26, 34
+		RenderText((char*)" | ", X + 22, Y, ColorCode_Cyan);
+		RenderText((char*)" | ", X + 30, Y, ColorCode_Cyan);
+		RenderText((char*)" | ", X + 38, Y, ColorCode_Yellow);
 	}
-	for (int j = 0; j < 3; j++) {
-		for (int i = 0; i < numberofplayer; i++) {
-			GotoXY(baseX + 3 + 18 + 8 * j, baseY + 3 + 17 / numberofplayer * i);
-			TextColor(ColorCode_Red);
-			std::cout << queue.peek();
-			queue.pop();
-		}
+	RenderText((char*)"Phase 1", baseX + 19, baseY + 2, ColorCode_Yellow);
+	RenderText((char*)"Phase 2", baseX + 27, baseY + 2, ColorCode_Yellow);
+	RenderText((char*)"Phase 3", baseX + 35, baseY + 2, ColorCode_Yellow);
+	RenderText((char*)"Total Point", baseX + 43, baseY + 2, ColorCode_Pink);
+	for (int j = 0; j < 4; j++) {
+		if (j < 3)
+			for (int i = 0; i < numberofplayer; i++) {
+				GotoXY(baseX + 3 + 18 + 8 * j, baseY + 3 + 17 / numberofplayer * i);
+				TextColor(ColorCode_Red);
+				INT64 point = queue.peek();
+				std::cout << point;
+				player[i].point += point;
+				if (winner.point < player[i].point) {
+					winner = player[i];
+				}
+				Sleep(300);
+				queue.pop();
+			}
+		else
+			for (int i = 0; i < numberofplayer; i++) {
+				GotoXY(baseX + 3 + 18 + 8 * j, baseY + 3 + 17 / numberofplayer * i);
+				TextColor(ColorCode_White);
+				std::cout << player[i].point;
+				Sleep(200);
+			}
 	}
+	RenderText((char*)"The Winner is: ", baseX + 3, baseY + 23, ColorCode_Cyan);
+	GotoXY(baseX + 18, baseY + 23);
+	TextColor(ColorCode_Yellow);
+	std::cout << winner.point << " points - " << winner.name;
+	TextColor(ColorCode_Black);
 	INT64 z = _getch();
 }
 
@@ -208,7 +236,7 @@ void MainMenu(char* name) {
 	INT64 baseX = 7, baseY = 3;
 	str choice[5]{ "  Start Game  ", "  High Score  ", "  History  ", "  Setting  ", "  Quit Game  " };
 	INT64 numberOfChoice = 5;
-	RenderText((char*)"Now playing: Origin - TheFatRat", baseX - 2, baseY + 26, ColorCode_Yellow);
+	RenderText((char*)"Now playing: Origin - TheFatRat                  ", baseX - 2, baseY + 26, ColorCode_Yellow);
 	while (running) {
 		clrscr();
 		INT64 isChoosed = 0;

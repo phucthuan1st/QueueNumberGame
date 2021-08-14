@@ -88,19 +88,19 @@ typedef struct NPC {
 	str name[16] {
 		"Alexa",
 		"Barbie",
-		"Mariposa",
+		"Sun",
 		"Texna",
 		"Robert",
-		"Geogre",
+		"Ong Noi",
 		"Jane",
 		"Cinderella",
-		"Belle",
+		"Bo khung",
 		"Aurora",
 		"Ariel",
 		"Vie",
 		"Jack",
-		"Mary",
-		"Taylor",
+		"Ba Noi",
+		"Tin",
 		"Samuel"
 	};
 } NPC_Name;
