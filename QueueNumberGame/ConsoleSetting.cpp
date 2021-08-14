@@ -3,7 +3,7 @@
 HANDLE hStdinp = GetStdHandle(STD_INPUT_HANDLE);
 HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
 
-void SetWindowSize(SHORT width, SHORT height)
+void SetWindowSize(INT64 width, INT64 height)
 {
 
     SMALL_RECT WindowSize;
@@ -15,7 +15,7 @@ void SetWindowSize(SHORT width, SHORT height)
     SetConsoleWindowInfo(hStdout, 1, &WindowSize);
 }
 
-void SetScreenBufferSize(SHORT width, SHORT height)
+void SetScreenBufferSize(INT64 width, INT64 height)
 {
 
     COORD NewSize;
@@ -50,12 +50,12 @@ void DisableCtrButton(bool Close, bool Min, bool Max)
     }
 }
 
-void GotoXY(SHORT x, SHORT y) {
+void GotoXY(INT64 x, INT64 y) {
     COORD rect{ x, y };
     SetConsoleCursorPosition(hStdout, rect);
 }
 
-int whereX()
+INT64 whereX()
 {
     CONSOLE_SCREEN_BUFFER_INFO csbi;
     if (GetConsoleScreenBufferInfo(hStdout, &csbi))
@@ -63,7 +63,7 @@ int whereX()
     return -1;
 }
 
-int whereY()
+INT64 whereY()
 {
     CONSOLE_SCREEN_BUFFER_INFO csbi;
     if (GetConsoleScreenBufferInfo(hStdout, &csbi))
@@ -71,26 +71,50 @@ int whereY()
     return -1;
 }
 
-void TextColor(int color)
+void TextColor(INT64 color)
 {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
 }
 
+
 void clrscr()
 {
-    CONSOLE_SCREEN_BUFFER_INFO	csbiInfo;
-    COORD	Home = { 0,0 };
-    DWORD	dummy;
+        HANDLE                     hStdOut;
+        CONSOLE_SCREEN_BUFFER_INFO csbi;
+        DWORD                      count;
+        DWORD                      cellCount;
+        COORD                      homeCoords = { 0, 0 };
 
-    GetConsoleScreenBufferInfo(hStdout, &csbiInfo);
+        hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+        if (hStdOut == INVALID_HANDLE_VALUE) return;
 
-    FillConsoleOutputCharacter(hStdout, ' ', csbiInfo.dwSize.X * csbiInfo.dwSize.Y, Home, &dummy);
-    csbiInfo.dwCursorPosition.X = 0;
-    csbiInfo.dwCursorPosition.Y = 0;
-    SetConsoleCursorPosition(hStdout, csbiInfo.dwCursorPosition);
+        /* Get the number of cells in the current buffer */
+        if (!GetConsoleScreenBufferInfo(hStdOut, &csbi)) return;
+        cellCount = csbi.dwSize.X * csbi.dwSize.Y;
+
+        /* Fill the entire buffer with spaces */
+        if (!FillConsoleOutputCharacter(
+            hStdOut,
+            (TCHAR)' ',
+            cellCount,
+            homeCoords,
+            &count
+        )) return;
+
+        /* Fill the entire buffer with the current colors and attributes */
+        if (!FillConsoleOutputAttribute(
+            hStdOut,
+            ColorCode_Black,
+            cellCount,
+            homeCoords,
+            &count
+        )) return;
+
+        /* Move the cursor home */
+        SetConsoleCursorPosition(hStdOut, homeCoords);
 }
 
-void RenderText(char* text, int x, int y, int color) {
+void RenderText(char* text, INT64 x, INT64 y, INT64 color) {
     GotoXY(x, y);
     TextColor(color);
     std::cout << text << std::endl;
@@ -119,3 +143,4 @@ void ShowScrollbar(BOOL Show)
     HWND hWnd = GetConsoleWindow();
     ShowScrollBar(hWnd, SB_BOTH, Show);
 }
+

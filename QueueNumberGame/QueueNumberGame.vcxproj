@@ -149,6 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <Media Include="Resource\Main Menu Bg sound.wav" />
+    <Media Include="Resource\xskt.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

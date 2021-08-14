@@ -3,6 +3,7 @@
 #include "ConsoleSetting.h"
 #include "QueueGameInit.h"
 #include "conio.h"
+#include "string.h"
 
 #define ColorCode_Black			0
 #define ColorCode_DarkBlue		1

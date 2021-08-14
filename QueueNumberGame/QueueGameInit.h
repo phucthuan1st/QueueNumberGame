@@ -2,15 +2,16 @@
 #include <iostream>
 #include <fstream>
 #include <ctime>
+
 typedef const char* str;
 
 #define BOUND 52
 
 struct Node {
 	Node* next;
-	int value;
+	INT64 value;
 
-	Node(int value) 
+	Node(INT64 value) 
 	{
 		this->next = NULL;
 		this->value = value;
@@ -27,10 +28,10 @@ struct Queue {
 		rear = NULL;
 	}
 
-	int size() {
+	INT64 size() {
 		if (front == NULL)
 			return 0;
-		int size = 0;
+		INT64 size = 0;
 		Node* pCur = front;
 		while (pCur != rear) {
 			size++;
@@ -49,7 +50,7 @@ struct Queue {
 		}
 	}
 
-	int peek() {
+	INT64 peek() {
 		return front->value;
 	}
 
@@ -60,7 +61,7 @@ struct Queue {
 	}
 
 	void display() {
-		int index = 1;
+		INT64 index = 1;
 		for (Node* p = front; p != NULL; p = p->next) {
 			std::cout << p->value << " ";
 			if (index == 10) {
@@ -71,7 +72,7 @@ struct Queue {
 		}
 	}
 
-	bool isExist(int value) {
+	bool isExist(INT64 value) {
 		if (size() == 0)
 			return false;
 		for (Node* p = front; p != rear->next; p = p->next) {
@@ -104,3 +105,7 @@ typedef struct NPC {
 	};
 } NPC_Name;
 
+struct Player {
+	char* name;
+	INT64 point;
+};
