@@ -53,6 +53,11 @@ void CreateANewQueue(Queue& q) {
 	}
 }
 
+void DrawTutorial() {
+	int baseX = 0, baseY = 0;
+	RenderText((char*)"Use arrow key to navigate between option, Enter to select, ESC to back.", baseX + 5, MaxHeight, ColorCode_White);
+}
+
 void DrawBox() {
 	INT64 baseX = 5, baseY = 2;
 	for (INT64 i = baseX; i < MaxWidth - 4; i++) {
@@ -70,6 +75,9 @@ void DrawBox() {
 	for (INT64 j = baseY + 1; j < MaxHeight - 2; j++) {
 		RenderText((char*)"||", MaxWidth - 6, j, ColorCode_Green);
 	}
+
+
+	DrawTutorial();
 }
 
 void Login(char* name) {
@@ -151,68 +159,7 @@ INT64 gameMode(char* name) {
 	return Choose(mode, numberOfMode, isChoosed, name);
 }
 
-void Game(char* name, INT64 gamemode) {
-	INT64 numberofplayer = 2*(gamemode + 1) + 1;
-	NPC_Name npc;
-	Player* player = new Player[numberofplayer];
-	for (int i = 0; i < numberofplayer; i++) {
-		player[i].name = new char[30];
-		player[i].point = 0;
-	}
-	for (int i = 0; i < numberofplayer - 1; i++) {
-		strcpy_s(player[i + 1].name, 30, npc.name[i]);
-	}
-	strcpy_s(player[0].name, 30, name);
-	Queue queue;
-	queue.Initialize();
-	CreateANewQueue(queue);
-	INT64 baseX = 7, baseY = 3;
-	clrscr();
-	DrawBox();
-	DrawName(name, baseX, baseY);
-	Player winner;
-	winner.name = new char[30];
-	winner.point = 0;
-	PlaySound(TEXT("./Resource/xskt.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
-	RenderText((char*)"Now playing: Xo So Kien Thiet - DYX Remix                ", baseX - 2, baseY + 26, ColorCode_Yellow);
-	for (int i = 0; i < numberofplayer; i++) {
-		SHORT X = baseX + 3, Y = baseY + 3 + 17 / numberofplayer * i;
-		RenderText(player[i].name, X, Y, ColorCode_Yellow);
-		RenderText((char*)" | ", X + 14, Y, ColorCode_Cyan); //18, 26, 34
-		RenderText((char*)" | ", X + 22, Y, ColorCode_Cyan);
-		RenderText((char*)" | ", X + 30, Y, ColorCode_Cyan);
-		RenderText((char*)" | ", X + 38, Y, ColorCode_Yellow);
-	}
-	RenderText((char*)"Phase 1", baseX + 19, baseY + 2, ColorCode_Yellow);
-	RenderText((char*)"Phase 2", baseX + 27, baseY + 2, ColorCode_Yellow);
-	RenderText((char*)"Phase 3", baseX + 35, baseY + 2, ColorCode_Yellow);
-	RenderText((char*)"Total Point", baseX + 43, baseY + 2, ColorCode_Pink);
-	for (int j = 0; j < 4; j++) {
-		if (j < 3)
-			for (int i = 0; i < numberofplayer; i++) {
-				GotoXY(baseX + 3 + 18 + 8 * j, baseY + 3 + 17 / numberofplayer * i);
-				TextColor(ColorCode_Red);
-				INT64 point = queue.peek();
-				std::cout << point;
-				player[i].point += point;
-				if (winner.point < player[i].point) {
-					winner = player[i];
-				}
-				Sleep(250);
-				queue.pop();
-			}
-		else
-			for (int i = 0; i < numberofplayer; i++) {
-				GotoXY(baseX + 3 + 18 + 8 * j, baseY + 3 + 17 / numberofplayer * i);
-				TextColor(ColorCode_White);
-				std::cout << player[i].point;
-				Sleep(150);
-			}
-	}
-	RenderText((char*)"The Winner is: ", baseX + 3, baseY + 23, ColorCode_Cyan);
-	GotoXY(baseX + 18, baseY + 23);
-	TextColor(ColorCode_Yellow);
-	std::cout << winner.point << " points - " << winner.name;
+void saveHighScore(Player player) {
 	//save player high score
 	std::fstream fin("./Data/HighScore.dat", std::ios::in);
 	HighScorePlayerList list;
@@ -230,7 +177,7 @@ void Game(char* name, INT64 gamemode) {
 		Element* ele = new Element(dump);
 		list.push(ele);
 	}
-	Element* me = new Element(player[0]);
+	Element* me = new Element(player);
 	list.push(me);
 	fin.close();
 	std::fstream fout("./Data/HighScore.dat", std::ios::out);
@@ -240,8 +187,149 @@ void Game(char* name, INT64 gamemode) {
 		cur = cur->next;
 	}
 	fout.close();
-	TextColor(ColorCode_Black);
+}
+
+void rank(Player* &player, int numberofplayer) {
+
+	INT64 baseX = 7, baseY = 3;
+	for (int j = baseY + 2; j < MaxHeight - 7; j++) {
+		for (int i = baseX; i < MaxWidth - 6; i++) {
+			RenderText((char*)" ", i, j, ColorCode_Black);
+		}
+	}
+
+	for (int i = 0; i < numberofplayer - 1; i++) {
+		for (int j = i; j < numberofplayer; j++) {
+			if (player[i].point < player[j].point) {
+				Player dummy = player[i];
+				player[i] = player[j];
+				player[j] = dummy;
+			}
+		}
+	}
+
+	RenderText((char*)"  RANKING  ", baseX + 20, baseY + 1, ColorCode_White);
+	
+	for (int i = 0; i < numberofplayer; i++) {
+		INT64 X = baseX + 10, Y = baseY + 3 + 17/numberofplayer*i;
+		GotoXY(X, Y);
+		TextColor(ColorCode_Yellow);
+		std::cout << i + 1 << ". ";
+		GotoXY(X + 4, Y);
+		TextColor(ColorCode_Cyan);
+		std::cout << player[i].name;
+		GotoXY(X + 25, Y);
+		TextColor(ColorCode_Red);
+		std::cout << player[i].point;
+	}
+}
+
+void saveHistory(Player player) {
+	std::string filename = player.name;
+	std::fstream fout("./Data/" + filename + ".dat", std::ios::out | std::ios::app);
+	time_t now = time(0);
+	tm* gmtm = gmtime(&now);
+	char* dt = asctime(gmtm);
+	fout << player.name << ",Score: " << player.point << ",Date: " << dt;
+	fout.close();
+}
+
+void Game(char* name, INT64 gamemode) {
+
+	//initialize game statictis
+		
+		//gamemode
+	INT64 numberofplayer = 2*(gamemode + 1) + 1;
+	NPC_Name npc;
+
+		//player statictis
+	Player* player = new Player[numberofplayer];
+	for (int i = 0; i < numberofplayer; i++) {
+		player[i].name = new char[30];
+		player[i].point = 0;
+	}
+	for (int i = 0; i < numberofplayer - 1; i++) {
+		strcpy_s(player[i + 1].name, 30, npc.name[i]);
+	}
+	strcpy_s(player[0].name, 30, name);
+
+		//GUI
+	INT64 baseX = 7, baseY = 3;
+	clrscr();
+	DrawBox();
+	DrawName(name, baseX, baseY);
+	Player winner;
+	winner.name = new char[30];
+	winner.point = 0;
+	for (int i = 0; i < numberofplayer; i++) {
+		SHORT X = baseX + 3, Y = baseY + 3 + 17 / numberofplayer * i;
+		RenderText(player[i].name, X, Y, ColorCode_Yellow);
+		RenderText((char*)" | ", X + 14, Y, ColorCode_Cyan); //18, 26, 34
+		RenderText((char*)" | ", X + 22, Y, ColorCode_Cyan);
+		RenderText((char*)" | ", X + 30, Y, ColorCode_Cyan);
+		RenderText((char*)" | ", X + 38, Y, ColorCode_Yellow);
+	}
+	RenderText((char*)"Phase 1", baseX + 19, baseY + 2, ColorCode_Yellow);
+	RenderText((char*)"Phase 2", baseX + 27, baseY + 2, ColorCode_Yellow);
+	RenderText((char*)"Phase 3", baseX + 35, baseY + 2, ColorCode_Yellow);
+	RenderText((char*)"Total Point", baseX + 43, baseY + 2, ColorCode_Pink);
+
+		//number queue
+	Queue queue;
+	queue.Initialize();
+	CreateANewQueue(queue);
+
+		//music
+	if (MusicOn) {
+		PlaySound(TEXT("./Resource/xskt.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
+		RenderText((char*)"Now playing: Xo So Kien Thiet - DYX Remix                ", baseX - 2, baseY + 26, ColorCode_Yellow);
+	}
+	else {
+		PlaySound(NULL, 0, 0);
+		RenderText((char*)"                                                 ", baseX - 2, baseY + 26, ColorCode_Yellow);
+	}
+
+		//gameplay
+	for (int j = 0; j < 4; j++) {
+		if (j < 3)
+			for (int i = 0; i < numberofplayer; i++) {
+				GotoXY(baseX + 3 + 18 + 8 * j, baseY + 3 + 17 / numberofplayer * i);
+				TextColor(ColorCode_Red);
+				INT64 point = queue.peek();
+				std::cout << point;
+				player[i].point += point;
+				if (winner.point < player[i].point) {
+					winner = player[i];
+				}
+				Sleep(200);
+				queue.pop();
+			}
+		else
+			for (int i = 0; i < numberofplayer; i++) {
+				GotoXY(baseX + 3 + 18 + 8 * j, baseY + 3 + 17 / numberofplayer * i);
+				TextColor(ColorCode_White);
+				std::cout << player[i].point;
+				Sleep(100);
+			}
+	}
+
+		//Announce the winner's name
+	RenderText((char*)"The Winner is: ", baseX + 3, baseY + 23, ColorCode_Cyan);
+	GotoXY(baseX + 18, baseY + 23);
+	TextColor(ColorCode_Yellow);
+	std::cout << winner.point << " points - " << winner.name;
+	
+	saveHighScore(player[0]);
+	saveHistory(player[0]);
+
+	RenderText((char*)"Press any key to see ranking", baseX + 18, baseY + 24, ColorCode_Red);
 	INT64 z = _getch();
+	RenderText((char*)"Press any key to see ranking", baseX + 18, baseY + 24, ColorCode_Black);
+
+	rank(player, numberofplayer);
+
+	z = _getch();
+
 }
 
 void HighScore(char* name) {
@@ -276,47 +364,107 @@ void HighScore(char* name) {
 	fin.close();
 	int z = _getch();
 }
-void History() {
-	
-}
-void Setting() {
+
+void History(char* name) {
+	std::string filename = name;
+	std::fstream fin("./Data/" + filename + ".dat", std::ios::in);
+
+	INT64 baseX = 7, baseY = 3;
+	clrscr();
+	DrawBox();
+	DrawName(name, baseX, baseY);
+	RenderText((char*)"YOUR HISTORY", baseX + 25, baseY + 2, ColorCode_DarkCyan);
+	int i = 0;
+	if (!fin.is_open()) {
+		RenderText((char*)"Your history is empty, you never play any match", baseX + 10, baseY + 4, ColorCode_Yellow);
+	}
+	else
+		while (!fin.eof()) {
+			char* buffer = new char[50];
+			fin.getline(buffer, 50, '\n' | '\0');
+			if (strcmp(buffer, "") == 0)
+				break;
+			char* playername = strtok(buffer, ",");
+			RenderText(playername, baseX + 3, baseY + i + 3, ColorCode_Yellow);
+			char* point = strtok(NULL, ",");
+			RenderText(point, baseX + 20, baseY + i + 3, ColorCode_Cyan);
+			char* date = strtok(NULL, ",");
+			RenderText(date, baseX + 33, baseY + i + 3, ColorCode_Green);
+			i++;
+		}
+	fin.close();
+	int z = _getch();
 	
 }
 
-void MainMenu(char* name) {
-	clrscr();
-	FormatConsole();
-	ShowCur(0);
-	PlaySound(TEXT("./Resource/Main Menu Bg sound.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
-	bool running = true;
+void Setting(char* name) {
 	INT64 baseX = 7, baseY = 3;
+	clrscr();
+	DrawBox();
+	DrawName(name, baseX, baseY);
+	RenderText((char*)"SETTING", baseX + 25, baseY + 2, ColorCode_DarkCyan);
+	
+	RenderText((char*)"Music:", baseX + 15, baseY + 10, ColorCode_Yellow);
+	while (true) {
+		if (MusicOn)
+			RenderText((char*)" <   On   >", baseX + 30, baseY + 10, ColorCode_Cyan);
+		else
+			RenderText((char*)" <   Off  >", baseX + 30, baseY + 10, ColorCode_Red);
+		int z = _getch();
+		KEY _key = key(z);
+		if (_key == KEY::LEFT || _key == KEY::RIGHT)
+			MusicOn = !MusicOn;
+		else if (_key == KEY::ENTER || _key == KEY::ESCAPE)
+			return;
+	}
+
+
+}
+
+void MainMenu(char* name) {
+	ShowCur(0);
+
+	INT64 baseX = 7, baseY = 3;
+
+	//main menu options
 	str choice[5]{ "  Start Game  ", "  High Score  ", "  History  ", "  Setting  ", "  Quit Game  " };
 	INT64 numberOfChoice = 5;
-	RenderText((char*)"Now playing: Origin - TheFatRat                  ", baseX - 2, baseY + 26, ColorCode_Yellow);
+	
+	bool running = true;
 	while (running) {
 		clrscr();
+
+		if (MusicOn) {
+			PlaySound(TEXT("./Resource/Main Menu Bg sound.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
+			RenderText((char*)"Now playing: Origin - TheFatRat                  ", baseX - 2, baseY + 26, ColorCode_Yellow);
+		}
+		else {
+			PlaySound(NULL, 0, 0);
+			RenderText((char*)"                                                 ", baseX - 2, baseY + 26, ColorCode_Yellow);
+		}
 		INT64 isChoosed = 0;
 		Choose(choice, 5, isChoosed, name);
+
 		if (isChoosed == 0) {
 			INT64 gamemode = gameMode(name);
 			if (gamemode != -1) {
 				Game(name, gamemode);
-				PlaySound(TEXT("./Resource/Main Menu Bg sound.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
 			}
 		}
 		else if (isChoosed == 1)
 			HighScore(name);
 		else if (isChoosed == 2)
-			History();
+			History(name);
 		else if (isChoosed == 3)
-			Setting();
+			Setting(name);
 		else if (isChoosed == 4)
-			running = 0;
+			running = false;
 	}
 		
 }
 
 int main() {
+	
 	FormatConsole();
 	char* name = new char[30];
 	Login(name);

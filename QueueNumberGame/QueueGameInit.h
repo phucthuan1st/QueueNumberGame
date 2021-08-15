@@ -91,7 +91,7 @@ typedef struct NPC {
 		"Sun",
 		"Texna",
 		"Robert",
-		"Ong Noi",
+		"Geogre",
 		"Jane",
 		"Cinderella",
 		"Bo khung",
@@ -162,3 +162,5 @@ struct HighScorePlayerList {
 	}
 
 };
+
+static bool MusicOn = true;

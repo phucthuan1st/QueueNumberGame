@@ -1,12 +1,11 @@
 #pragma once
 #pragma comment(lib, "winmm.lib")
+#pragma warning(disable : 4996)
 #include "ConsoleSetting.h"
 #include "QueueGameInit.h"
 #include "conio.h"
 #include "string.h"
 #include <fstream>
-
-
 
 #define ColorCode_Black			0
 #define ColorCode_DarkBlue		1
